@@ -48,6 +48,7 @@ function love.update(dt)
 		toast:update()
 		return
 	end
+
 	-- Else:
 	timer = timer - dt
 	if timer <= 0 then
@@ -55,11 +56,14 @@ function love.update(dt)
 		gameOver = true
 	end
 
-	if love.mouse.isDown(1) and
+	if not love.mouse.isDown(1) then
+		mousePressedAlready = false
+	elseif not mousePressedAlready and
 			not toast:isDESTROYED() and
 			CheckCollision(love.mouse.getX(), love.mouse.getY(), 1, 1,
 					toast.xpos,toast.ypos,toast.width,toast.height) 
 	then
+		mousePressedAlready = true
 		toast:butter()
 		if firstButter then
 			knife:setSmear()
