@@ -44,34 +44,38 @@ function love.update(dt)
 			timer = 60
 			gameOver = false
 		end
-	else
-		timer = timer - dt
-		if timer <= 0 then
-			timer = 0
-			gameOver = true
-		end
 
-		if toast:isDamaged() then
-			knife:setCrummy()
-		end
-		if toast:isDESTROYED() then
-			score = score + 1
-			toast:respawn()
-		end
+		toast:update()
+		return
+	end
+	-- Else:
+	timer = timer - dt
+	if timer <= 0 then
+		timer = 0
+		gameOver = true
 	end
 
-	toast:update()
-end
-
--- TODO move this into update with love.mouse.isDown
-function love.mousepressed(x,y,button,istouch)	
-	if not gameOver and not toast:isDESTROYED() and button == 1 and CheckCollision(x,y,1,1,toast.xpos,toast.ypos,toast.width,toast.height) then
+	if love.mouse.isDown(1) and
+			not toast:isDESTROYED() and
+			CheckCollision(love.mouse.getX(), love.mouse.getY(), 1, 1,
+					toast.xpos,toast.ypos,toast.width,toast.height) 
+	then
 		toast:butter()
 		if firstButter then
 			knife:setSmear()
 			firstButter = false
 		end
 	end
+
+	if toast:isDamaged() then
+		knife:setCrummy()
+	end
+	if toast:isDESTROYED() then
+		score = score + 1
+		toast:respawn()
+	end
+
+	toast:update()
 end
 
 function love.draw()
