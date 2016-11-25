@@ -20,6 +20,7 @@ local score
 local timer
 local gameOver
 local firstButter
+local mousePressedAlready
 
 function love.load()
 	love.mouse.setVisible(false)
