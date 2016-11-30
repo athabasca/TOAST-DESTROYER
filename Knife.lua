@@ -39,6 +39,17 @@ Knife.new = function(image, framew, frameh, nframes)
 		self.currentFrame = 4
 		self.activeFrame = self.frames[self.currentFrame]
 	end
-	
+
 	return self
 end
+
+-- Collision detection function taken from http://love2d.org/wiki/BoundingBox.lua
+Knife.collidesRect = function(x2, y2, w2, h2)
+	local x1 = love.mouse.getX()
+	local y1 = love.mouse.getY()
+	local w1 = 1
+	local h1 = 1
+	print(x1, y1, w1, h1)
+	return x1 < x2+w2 and x2 < x1+w1 and y1 < y2+h2 and y2 < y1+h1
+end
+

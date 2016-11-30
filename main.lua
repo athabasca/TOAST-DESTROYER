@@ -1,15 +1,6 @@
 require("Toast")
 require("Knife")
 
--- Collision detection taken function from http://love2d.org/wiki/BoundingBox.lua
--- Returns true if two boxes overlap, false if they don't
--- x1,y1 are the left-top coords of the first box, while w1,h1 are its width and height
--- x2,y2,w2 & h2 are the same, but for the second box
-function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
-	-- return x1 >= x2 and x1+w1 <= x2+w2 and y1 >= y2 and y1+h1 <= y2+h2
-	return x1 < x2+w2 and x2 < x1+w1 and y1 < y2+h2 and y2 < y1+h1
-end
-
 local plateImg
 local knifeImg
 local knife = nil
@@ -20,7 +11,6 @@ local score
 local timer
 local gameOver
 local firstButter
-local mousePressedAlready
 
 function love.load()
 	love.mouse.setVisible(false)
@@ -57,14 +47,10 @@ function love.update(dt)
 		gameOver = true
 	end
 
-	if not love.mouse.isDown(1) then
-		mousePressedAlready = false
-	elseif not mousePressedAlready and
+	if love.mouse.isDown(1) and
 			not toast:isDESTROYED() and
-			CheckCollision(love.mouse.getX(), love.mouse.getY(), 1, 1,
-					toast.xpos,toast.ypos,toast.width,toast.height) 
+			Knife.collidesRect(toast.xpos,toast.ypos,toast.width,toast.height) 
 	then
-		mousePressedAlready = true
 		toast:butter()
 		if firstButter then
 			knife:setSmear()
