@@ -49,7 +49,6 @@ Knife.collidesRect = function(x2, y2, w2, h2)
 	local y1 = love.mouse.getY()
 	local w1 = 1
 	local h1 = 1
-	print(x1, y1, w1, h1)
 	return x1 < x2+w2 and x2 < x1+w1 and y1 < y2+h2 and y2 < y1+h1
 end
 

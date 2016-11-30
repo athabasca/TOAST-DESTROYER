@@ -12,6 +12,10 @@ local timer
 local gameOver
 local firstButter
 
+local mouseWasDown
+local dx, dy
+local lastx, lasty
+
 function love.load()
 	love.mouse.setVisible(false)
 
@@ -26,6 +30,9 @@ function love.load()
 	timer = 30
 	gameOver = true
 	firstButter = true
+
+	dx = 0
+	dy = 0
 end
 
 function love.update(dt)
@@ -51,10 +58,27 @@ function love.update(dt)
 			not toast:isDESTROYED() and
 			Knife.collidesRect(toast.xpos,toast.ypos,toast.width,toast.height) 
 	then
-		toast:butter()
-		if firstButter then
-			knife:setSmear()
-			firstButter = false
+		if not mouseWasDown then
+			mouseWasDown = true
+			lastx = love.mouse.getX()
+			lasty = love.mouse.getY()
+		else
+			local x = love.mouse.getX()
+			local y = love.mouse.getY()
+			dx = dx + math.abs(lastx - x)
+			dy = dy + math.abs(lasty - y)
+			toastDiag = math.sqrt(toast.width^2 + toast.height^2)
+			if math.sqrt(dx^2 + dy^2) >= toastDiag then
+				dx = (dx-toast.width > 0) and dx-toast.width or 0
+				dy = (dy-toast.height > 0) and dy-toast.height or 0
+				toast:butter()
+				if firstButter then
+					knife:setSmear()
+					firstButter = false
+				end
+			end
+			lastx = x
+			lasty = y
 		end
 	end
 
