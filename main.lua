@@ -1,5 +1,6 @@
 require("Toast")
 require("Knife")
+require("Sound")
 
 local plateImg
 local knifeImg
@@ -68,6 +69,9 @@ function love.update(dt)
 			dx = dx + math.abs(lastx - x)
 			dy = dy + math.abs(lasty - y)
 			toastDiag = math.sqrt(toast.width^2 + toast.height^2)
+
+			-- Damage the toast if the knife travelled a distance at least
+			-- equal to the diagonal of the toast.
 			if math.sqrt(dx^2 + dy^2) >= toastDiag then
 				dx = (dx-toast.width > 0) and dx-toast.width or 0
 				dy = (dy-toast.height > 0) and dy-toast.height or 0
@@ -77,6 +81,19 @@ function love.update(dt)
 					firstButter = false
 				end
 			end
+
+			-- Play a sound if the knife travelled at least 1/4 of the
+			-- diagonal of the toast, and not already playing a sound.
+			if math.sqrt(dx^2 + dy^2)*4 >= toastDiag then
+				print("trying to play sound")
+				if not Sound.isPlaying() then
+					print("playing sound")
+					Sound.playRandom()
+				else
+					print("sound already playing")
+				end
+			end
+
 			lastx = x
 			lasty = y
 		end
