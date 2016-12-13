@@ -85,12 +85,8 @@ function love.update(dt)
 			-- Play a sound if the knife travelled at least 1/4 of the
 			-- diagonal of the toast, and not already playing a sound.
 			if math.sqrt(dx^2 + dy^2)*4 >= toastDiag then
-				print("trying to play sound")
 				if not Sound.isPlaying() then
-					print("playing sound")
 					Sound.playRandom()
-				else
-					print("sound already playing")
 				end
 			end
 
