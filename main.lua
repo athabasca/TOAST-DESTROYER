@@ -25,7 +25,7 @@ function love.load()
 	toastImg = love.graphics.newImage("toast-spritesheet.png")
 
 	knife = Knife.new(knifeImg, 128, 512, 4)
-	toast = Toast.new(toastImg, 512, 512, 5, 30)
+	toast = Toast.new(toastImg, 512, 512, 5, 12)
 
 	score = 0
 	timer = 30
@@ -48,11 +48,31 @@ function love.update(dt)
 		return
 	end
 
-	-- Else:
 	timer = timer - dt
 	if timer <= 0 then
 		timer = 0
 		gameOver = true
+	end
+
+	if not love.mouse.isDown(1) and mouseWasDown then
+		mouseWasDown = false
+		-- Damage the toast if the knife travelled a distance at
+		-- least equal to one quarter the diagonal of the toast.
+		local toastDiag = math.sqrt(toast.width^2 + toast.height^2)
+		if math.sqrt(dx^2 + dy^2) >= toastDiag/4 then
+			dx = (dx-toast.width > 0) and dx-toast.width or 0
+			dy = (dy-toast.height > 0) and dy-toast.height or 0
+			toast:butter()
+			if firstButter then
+				knife:setSmear()
+				firstButter = false
+			end
+			if not Sound.isPlaying() then
+				Sound.playRandom()
+			end
+		end
+		dx = 0
+		dy = 0
 	end
 
 	if love.mouse.isDown(1) and
@@ -66,30 +86,11 @@ function love.update(dt)
 		else
 			local x = love.mouse.getX()
 			local y = love.mouse.getY()
-			dx = dx + math.abs(lastx - x)
-			dy = dy + math.abs(lasty - y)
-			toastDiag = math.sqrt(toast.width^2 + toast.height^2)
-
-			-- Damage the toast if the knife travelled a distance at least
-			-- equal to the diagonal of the toast.
-			if math.sqrt(dx^2 + dy^2) >= toastDiag then
-				dx = (dx-toast.width > 0) and dx-toast.width or 0
-				dy = (dy-toast.height > 0) and dy-toast.height or 0
-				toast:butter()
-				if firstButter then
-					knife:setSmear()
-					firstButter = false
-				end
-			end
-
-			-- Play a sound if the knife travelled at least 1/4 of the
-			-- diagonal of the toast, and not already playing a sound.
-			if math.sqrt(dx^2 + dy^2)*4 >= toastDiag then
-				if not Sound.isPlaying() then
-					Sound.playRandom()
-				end
-			end
-
+			
+			if (dx > 0) == ((lastx - x) > 0) then
+				dx = dx + (lastx - x) end
+			if (dy > 0) == ((lasty - y) > 0) then
+				dy = dy + (lasty - y) end
 			lastx = x
 			lasty = y
 		end

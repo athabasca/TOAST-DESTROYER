@@ -43,7 +43,10 @@ Toast.new = function(image, framew, frameh, nframes, hp)
 		self.hp = self.hp - 1
 		-- move to the next frame/stage of destruction
 		-- every (totalHP/nframes) butter strokes.
-		if self.hp % (self.totalHP/nframes) == 0 then
+		if self.hp % math.floor(self.totalHP/nframes) == 0 and
+				-- Careful: if the toast is DESTROYED 
+				-- then there may be no more frames.
+				self.currentFrame < nframes - 1 then
 			self.currentFrame = self.currentFrame + 1
 		end
 	end
